@@ -2,8 +2,8 @@
 let x = 0
 let y = 0
 let k = 100
-const screen_width = 900
-const screen_height = 600
+const screen_width = 1500
+const screen_height = 800
 const max_count = 10000
 let mouse_clicked = false
 tags = Object.values(tag_json[0]["tag"]).slice(0, max_count)
@@ -21,8 +21,8 @@ function draw() {
     const canvas = document.getElementById("canvas")
     canvas.addEventListener("mousemove", (ev) => {
         if (mouse_clicked) {
-            x -= ev.movementX / (800 * k)
-            y -= ev.movementY / (800 * k)
+            x -= ev.movementX / (200 * k)
+            y -= ev.movementY / (200 * k)
         }
 
     })
@@ -69,7 +69,7 @@ function draw() {
         ctx.fillStyle = "purple"
         ctx.fillText("x:" + Math.floor(x * 100) / 100
             + ", y:" + Math.floor(y * 100) / 100
-            + ", k:" + Math.floor(k * 100) / 100, 700, 580)
+            + ", k:" + Math.floor(k * 100) / 100, screen_width - 200, screen_height - 10)
     }
 }
 window.addEventListener("load", draw)
