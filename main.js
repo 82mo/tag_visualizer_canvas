@@ -9,6 +9,23 @@ let mouse_clicked = false
 tags = Object.values(tag_json[0]["tag"]).slice(0, max_count)
 xs = Object.values(tag_json[0]["x"]).slice(0, max_count)
 ys = Object.values(tag_json[0]["y"]).slice(0, max_count)
+let fetched_text = ""
+let cos = []
+function update_cos(tag) {
+    fetch("https://panimo.pythonanywhere.com/api/cos_sim_tag2tag/" + tag + "?count=1000", {
+        method: "GET"
+    }).then((res) => {
+        console.log(res)
+        return res.text()
+    }).then((text) => {
+        console.log(text)
+        cos = text.split(",")
+        cos.pop()
+        console.log("cos loaded")
+        console.log(cos)
+    })
+}
+
 let search_id = -1
 function pos_trans([a, b]) {
     return [(a - (x - screen_width * 0.5 / k)) * k, (b - (y - screen_height * 0.5 / k)) * k]
@@ -48,7 +65,7 @@ function draw() {
         /*
         ctx.fillStyle = "rgb(200 0 0)";
         ctx.fillRect(pos_trans([10, 10])[0], pos_trans([10, 10])[1], len_trans(50), len_trans(50));
-
+ 
         ctx.fillStyle = "rgb(0 0 200 / 50%)";
         ctx.fillRect(pos_trans([30, 30])[0], pos_trans([30, 30])[1], len_trans(50), len_trans(50));
         */
@@ -57,9 +74,10 @@ function draw() {
         for (i = 0; i < tags.length; i++) {
             pos = pos_trans([xs[i], ys[i]])
             if (i == search_id) {
-                ctx.fillStyle = "green"
-            } else {
                 ctx.fillStyle = "black"
+            } else {
+                //console.log("hsl(" + ((cos[i] + 1) / 2) * 300 + ",100%,100%)")
+                ctx.fillStyle = "hsl(" + (240 - (((cos[i] + 1) / 2) * 240)) + ",100%,50%)"
             }
             ctx.font = Math.floor(10 + 10 * (tags.length - i) / tags.length) + "px serif"
             ctx.fillText(tags[i], pos[0], pos[1])
@@ -83,6 +101,7 @@ button.addEventListener("click", (ev) => {
         x = xs[search_id]
         y = ys[search_id]
     }
+    update_cos(tag_input.value)
 })
 tag_input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
